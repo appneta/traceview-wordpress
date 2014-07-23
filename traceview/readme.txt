@@ -4,9 +4,9 @@ Donate link: http://www.appneta.com/
 Tags: traceview, appneta, performance, monitor, monitoring, apm
 Requires at least: 3.0.1
 Tested up to: 3.9
-Stable tag: 0.3
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Stable tag: 0.4
+License: MIT
+License URI: http://opensource.org/licenses/MIT
 
 This plug-in integrates WordPress with AppNeta's TraceView APM system.
 == Description ==
@@ -37,6 +37,10 @@ agents on each web host.
 3. Annotations will be automatically added when themes or active plugins change
 
 == Changelog ==
+= 0.4 =
+* Added modular config files
+* Changed to MIT licence
+* Added support for custom layer prefix
 
 = 0.3 =
 * Made safe for single and multi-site installs
