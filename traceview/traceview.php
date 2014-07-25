@@ -101,31 +101,34 @@ foreach (glob( plugin_dir_path( __FILE__ ) . "conf.d/*.php") as $filename)
 // Now add controller / actions
 
 function traceview_add_to_content( $content ) {
+     $controller = 'wordpress';
+     if(is_multisite()) {
+        global $blog_id;
+        $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
+        $controller = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING);
+     }
 
-    if (extension_loaded("oboe")) { 
         if( is_front_page() || is_home() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "home"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "home"));
         } elseif( is_single() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "post"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "post"));
         } elseif( is_page() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "page"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "page"));
         } elseif( is_category() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "category"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "category"));
         } elseif( is_tag() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "tag"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "tag"));
         } elseif( is_author() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "author"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "author"));
         } elseif( is_date() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "date"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "date"));
         } elseif( is_search() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "search"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "search"));
         } elseif( is_feed() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "feed"));
-	} elseif( is_admin() ) {
-	    oboe_log("info", array("Controller" => "wordpress", "Action" => "admin"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "feed"));
+	    } elseif( is_admin() ) {
+	    oboe_log("info", array("Controller" => $controller, "Action" => "admin"));
         }
-    }
-
     return $content;
 }
 
