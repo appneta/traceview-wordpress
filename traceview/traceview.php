@@ -300,7 +300,7 @@ function traceview_annotate($message) {
 }
 
 function tv_annotate_upgrade($wp_db_version, $wp_current_db_version) {
-    traceview_annotate("WordPress version was upgraded from $wp_current_db_version to $wp_db_version");
+    traceview_annotate("WordPress version was upgraded from " . filter_var($wp_current_db_version, FILTER_SANITIZE_STRING) . " to " . filter_var($wp_db_version, FILTER_SANITIZE_STRING));
 }
 add_action('wp_upgrade','tv_annotate_upgrade');
 
@@ -309,32 +309,34 @@ function tv_annotate_theme_switch($oldtheme) {
     global $blog_id;
     $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
     $thetheme = wp_get_theme();
-    $Annotation = $current_blog_details->blogname . " has changed theme; new theme is " . $thetheme->get('Name') . " version " . $thetheme->get('Version');
+    $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has changed theme; new theme is " . filter_var($thetheme->get('Name'), FILTER_SANITIZE_STRING) . " version " . filter_var($thetheme->get('Version'), FILTER_SANITIZE_STRING);
     traceview_annotate($Annotation);
 }
 add_action('after_switch_theme','tv_annotate_theme_switch');
 
 function tv_annotate_plugin_activate($plugin, $networkwide=null) {
+    $plugin = filter_var($plugin, FILTER_SANITIZE_STRING);
     if($networkwide) {
         $Annotation = "Network-wide plugin activated: $plugin";
         traceview_annotate($Annotation);
     } else {
         global $blog_id;
         $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
-        $Annotation = $current_blog_details->blogname . " has activated new plugin: $plugin ";
+        $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has activated new plugin: $plugin ";
         traceview_annotate($Annotation);
     }
 }
 add_action('activated_plugin','tv_annotate_plugin_activate');
 
 function tv_annotate_plugin_deactivate($plugin, $networkwide=null) {
+    $plugin = filter_var($plugin, FILTER_SANITIZE_STRING);
     if($networkwide) {
         $Annotation = "Network-wide plugin deactivated: $plugin";
         traceview_annotate($Annotation);
     } else {
         global $blog_id;
         $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
-        $Annotation = $current_blog_details->blogname . " has deactivated a plugin: $plugin ";
+        $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has deactivated a plugin: $plugin ";
         traceview_annotate($Annotation);
     }
 }
