@@ -211,22 +211,31 @@ if($Annotate == 1) {$AnnotateFlag = 'checked '; }
 
 echo <<<EOHTML
 <div class="wrap">
-<h2>TraceView by AppNeta Settings</h2>
+<img src='http://www.appneta.com/images/graphics/logo.png' alt='AppNeta logo' /><h1>TraceView by AppNeta Settings</h1>
 <form method="post" action="{$_SERVER['REQUEST_URI']}">
 <fieldset class="options">       
-<legend>Add TraceView options</legend>       
-<label for="">Client Key:</label>     
-<input type="text" size="45" name="traceview_client_key" value="{$ClientKey}" title="The client key of your TraceView account." /><br />
-<label for="">Layer prefix:</label>
-<input type="text" size="45" name="traceview_layer_prefix" value="{$LayerPrefix}" title="This string will be pre-pended to the hook name when layers are created." /><br />
-<label for="">Application name:</label>
-<input type="text" size="45" name="traceview_application_name" value="{$AppName}" title="The application name, as defined in your TraceView dashboard." /><br />
-
-<label for="">Add annotations</label>
-
-<input type="checkbox" name="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /><br />
+<h2>Add TraceView options</h2>
+<table>
+    <tr>       
+        <td><label for="">Client Key:</label></td>
+        <td><input type="text" size="45" name="traceview_client_key" value="{$ClientKey}" title="The client key of your TraceView account." /></td>
+    </tr>       
+    <tr>       
+        <td><label for="">Layer prefix:</label></td>
+        <td><input type="text" size="45" name="traceview_layer_prefix" value="{$LayerPrefix}" title="This string will be pre-pended to the hook name when layers are created." /></td>
+    </tr>       
+    <tr>       
+        <td><label for="">Application name:</label></td>
+        <td><input type="text" size="45" name="traceview_application_name" value="{$AppName}" title="The application name, as defined in your TraceView dashboard." /></td>
+    </tr>       
+    <tr>       
+        <td><label for="">Add annotations</label></td>
+        <td><input type="checkbox" name="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /></td>
+    </tr>       
+</table>
 
 </fieldset>
+<br />
 <input type="submit" name="Submit" value="Update Options" />
 </form>
 <hr width="50%" />
