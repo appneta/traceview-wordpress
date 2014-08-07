@@ -13,7 +13,6 @@
 defined('ABSPATH') or die("No script kiddies please!");
 require 'tv-api-stub.php';
 
-
 function traceview_start_section($args) { 
        $hookname = current_filter();
        $strip_list = array('_before','_after','before_','after_','pre_','post_','_start','_end');
@@ -84,6 +83,7 @@ function tv_action_watch($actionname) {
     add_action($actionname,'traceview_log_action_end',255);
 
 }
+
 function tv_filter_watch($filtername) {
     add_filter($filtername,'traceview_log_filter_start',1);
     add_filter($filtername,'traceview_log_filter_end',255);
@@ -111,7 +111,7 @@ function traceview_add_to_content( $content ) {
         if( is_front_page() || is_home() ) {
 	    oboe_log("info", array("Controller" => $controller, "Action" => "home"));
         } elseif( is_single() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "post"));
+	    oboe_log("info", array("Controller" => $controller, "Action" => "blog-post"));
         } elseif( is_page() ) {
 	    oboe_log("info", array("Controller" => $controller, "Action" => "page"));
         } elseif( is_category() ) {
@@ -131,7 +131,6 @@ function traceview_add_to_content( $content ) {
         }
     return $content;
 }
-
 add_filter('the_content', 'traceview_add_to_content');
 
 
@@ -155,7 +154,6 @@ function traceview_add_options()
     add_option('traceview_add_annotations', 1, "When ticked, TraceView will report annotations for certain system events");
   }
 }
-
 traceview_add_options();
 
 function traceview_options_page()
@@ -217,20 +215,20 @@ echo <<<EOHTML
 <h2>Add TraceView options</h2>
 <table>
     <tr>       
-        <td><label for="">Client Key:</label></td>
-        <td><input type="text" size="45" name="traceview_client_key" value="{$ClientKey}" title="The client key of your TraceView account." /></td>
+        <td><label for="traceview_client_key">Client Key:</label></td>
+        <td><input type="text" size="45" name="traceview_client_key" id="traceview_client_key" value="{$ClientKey}" title="The client key of your TraceView account." /></td>
     </tr>       
     <tr>       
-        <td><label for="">Layer prefix:</label></td>
-        <td><input type="text" size="45" name="traceview_layer_prefix" value="{$LayerPrefix}" title="This string will be pre-pended to the hook name when layers are created." /></td>
+        <td><label for="traceview_layer_prefix">Layer prefix:</label></td>
+        <td><input type="text" size="45" name="traceview_layer_prefix" id="traceview_layer_prefix" value="{$LayerPrefix}" title="This string will be pre-pended to the hook name when layers are created." /></td>
     </tr>       
     <tr>       
-        <td><label for="">Application name:</label></td>
-        <td><input type="text" size="45" name="traceview_application_name" value="{$AppName}" title="The application name, as defined in your TraceView dashboard." /></td>
+        <td><label for="traceview_application_name">Application name:</label></td>
+        <td><input type="text" size="45" name="traceview_application_name" id="traceview_application_name" value="{$AppName}" title="The application name, as defined in your TraceView dashboard." /></td>
     </tr>       
     <tr>       
-        <td><label for="">Add annotations</label></td>
-        <td><input type="checkbox" name="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /></td>
+        <td><label for="traceview_add_annotations">Add annotations</label></td>
+        <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /></td>
     </tr>       
 </table>
 
@@ -255,7 +253,6 @@ EOHTML;
 
 }
 
-
 function traceview_admin_menu()
 {
    // We use the "update_core" permission, on the premise that only server admins should be doing this
@@ -266,6 +263,11 @@ function traceview_admin_menu()
 $hook = is_multisite() ? 'network_' : '';
 add_action( "{$hook}admin_menu", 'traceview_admin_menu');
 
+/**
+  ----------------------------
+  Annotations section
+
+**/
 
 function traceview_annotate($message) {
     $ClientKey = is_multisite() ? get_site_option('traceview_client_key') : get_option('traceview_client_key');
@@ -311,22 +313,21 @@ function traceview_annotate($message) {
 
 }
 
-function tv_annotate_upgrade($wp_db_version, $wp_current_db_version) {
+function traceview_annotate_upgrade($wp_db_version, $wp_current_db_version) {
     traceview_annotate("WordPress version was upgraded from " . filter_var($wp_current_db_version, FILTER_SANITIZE_STRING) . " to " . filter_var($wp_db_version, FILTER_SANITIZE_STRING));
 }
-add_action('wp_upgrade','tv_annotate_upgrade');
+add_action('wp_upgrade','traceview_annotate_upgrade');
 
-
-function tv_annotate_theme_switch($oldtheme) {
+function traceview_annotate_theme_switch($oldtheme) {
     global $blog_id;
     $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
     $thetheme = wp_get_theme();
     $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has changed theme; new theme is " . filter_var($thetheme->get('Name'), FILTER_SANITIZE_STRING) . " version " . filter_var($thetheme->get('Version'), FILTER_SANITIZE_STRING);
     traceview_annotate($Annotation);
 }
-add_action('after_switch_theme','tv_annotate_theme_switch');
+add_action('after_switch_theme','traceview_annotate_theme_switch');
 
-function tv_annotate_plugin_activate($plugin, $networkwide=null) {
+function traceview_annotate_plugin_activate($plugin, $networkwide=null) {
     $plugin = filter_var($plugin, FILTER_SANITIZE_STRING);
     if($networkwide) {
         $Annotation = "Network-wide plugin activated: $plugin";
@@ -338,9 +339,9 @@ function tv_annotate_plugin_activate($plugin, $networkwide=null) {
         traceview_annotate($Annotation);
     }
 }
-add_action('activated_plugin','tv_annotate_plugin_activate');
+add_action('activated_plugin','traceview_annotate_plugin_activate');
 
-function tv_annotate_plugin_deactivate($plugin, $networkwide=null) {
+function traceview_annotate_plugin_deactivate($plugin, $networkwide=null) {
     $plugin = filter_var($plugin, FILTER_SANITIZE_STRING);
     if($networkwide) {
         $Annotation = "Network-wide plugin deactivated: $plugin";
@@ -352,6 +353,6 @@ function tv_annotate_plugin_deactivate($plugin, $networkwide=null) {
         traceview_annotate($Annotation);
     }
 }
-add_action('deactivated_plugin','tv_annotate_plugin_deactivate');
+add_action('deactivated_plugin','traceview_annotate_plugin_deactivate');
 
 ?>
