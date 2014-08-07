@@ -3,7 +3,7 @@
  * Plugin Name: TraceView by AppNeta
  * Plugin URI: https://github.com/appneta/traceview-wordpress
  * Description: A simple plug-in for intrsumenting TraceView under WordPress.
- * Version: 0.4beta
+ * Version: 0.5b beta
  * Author: Greg Bromage <gbromage@appneta.com
  * Author URI: http://www.appneta.com
  * License: MIT Licence ( http://opensource.org/licenses/MIT )
@@ -147,11 +147,13 @@ function traceview_add_options()
     add_site_option('traceview_application_name', 'Default', "The application name in your TraceView console for this web application");
     add_site_option('traceview_layer_prefix', 'wp_', "This string will be pre-pended to the hook name to create the layer name.");
     add_site_option('traceview_add_annotations', 1, "When ticked, TraceView will report annotations for certain system events");
+    add_site_option('traceview_add_autoconfig_button', 0, "When ticked, the Auto-generate button will be displayed");
   } else {
     add_option('traceview_client_key', 'Not set', "Your TraceView Client Key (obtain this from the TraceView console Get Started page");
     add_option('traceview_application_name', 'Default', "The application name in your TraceView console for this web application");
     add_option('traceview_layer_prefix', 'wp_', "This string will be pre-pended to the hook name to create the layer name.");
     add_option('traceview_add_annotations', 1, "When ticked, TraceView will report annotations for certain system events");
+    add_option('traceview_add_autoconfig_button', 0, "When ticked, the Auto-generate button will be displayed");
   }
 }
 traceview_add_options();
@@ -172,19 +174,21 @@ function traceview_options_page()
 	$LayerPrefix = (string)trim($_POST['traceview_layer_prefix']);
 	$LayerPrefix = filter_var($LayerPrefix, FILTER_SANITIZE_STRING);
 
-        $Annotate = ($_POST['traceview_add_annotations'] == 1);
-        if($Annotate) { $ann = 1; } else { $ann = 0; }
-
+		$ann = ($_POST['traceview_add_annotations'] == 1) ? 1 : 0;
+        $autoconfig = ($_POST['traceview_add_autoconfig_button'] == 1) ? 1 : 0;
+        
         if(is_multisite()) {
             update_site_option('traceview_client_key', $ClientKey);
             update_site_option('traceview_application_name', $AppName);
             update_site_option('traceview_layer_prefix', $LayerPrefix);
             update_site_option('traceview_add_annotations', $ann);
+            update_site_option('traceview_add_autoconfig_button', $autoconfig);
         } else {
             update_option('traceview_client_key', $ClientKey);
             update_option('traceview_application_name', $AppName);
             update_option('traceview_layer_prefix', $LayerPrefix);
             update_option('traceview_add_annotations', $ann);
+            update_option('traceview_add_autoconfig_button', $autoconfig);
 	}
         traceview_annotate('TraceView plugin settings updated');
         $updated = true;
@@ -193,6 +197,7 @@ function traceview_options_page()
     $ClientKey = is_multisite() ? get_site_option('traceview_client_key') : get_option('traceview_client_key');
     $AppName = is_multisite() ? get_site_option('traceview_application_name') : get_option('traceview_application_name');
     $Annotate = is_multisite() ? get_site_option('traceview_add_annotations') : get_option('traceview_add_annotations');
+    $autoconfig = is_multisite() ? get_site_option('traceview_add_autoconfig_button') : get_option('traceview_add_autoconfig_button');
     $LayerPrefix = is_multisite() ? get_site_option('traceview_layer_prefix') : get_option('traceview_layer_prefix');
 
 if($updated)
@@ -206,6 +211,8 @@ EOHTML;
 
 $AnnotateFlag = '';
 if($Annotate == 1) {$AnnotateFlag = 'checked '; }
+$AutoConfigFlag = '';
+if($autoconfig == 1) {$AutoConfigFlag = 'checked '; }
 
 echo <<<EOHTML
 <div class="wrap">
@@ -229,6 +236,10 @@ echo <<<EOHTML
     <tr>       
         <td><label for="traceview_add_annotations">Add annotations</label></td>
         <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /></td>
+    </tr>       
+    <tr>       
+        <td><label for="traceview_add_autoconfig_button">Add auto-config button to bottom of page</label></td>
+        <td><input type="checkbox" name="traceview_add_autoconfig_button" id="traceview_add_autoconfig_button" value="1" title="When ticked, the Auto-generate button will be displayed" {$AutoConfigFlag} /></td>
     </tr>       
 </table>
 
@@ -354,5 +365,33 @@ function traceview_annotate_plugin_deactivate($plugin, $networkwide=null) {
     }
 }
 add_action('deactivated_plugin','traceview_annotate_plugin_deactivate');
+
+function traceview_generate_config_from_current_page()
+{
+    if ( current_user_can('manage_options') && (is_multisite() ? get_site_option('traceview_add_autoconfig_button') : get_option('traceview_add_autoconfig_button')) ) {
+       print "<script language='javascript' type='text/javascript'>\n";
+       print '    function showConfig() {';
+                global $wp_actions;
+                $myactions = array_keys($wp_actions);
+                sort($myactions);
+                $configtext = '//Auto-generated monitoring script - some editing may be required<br />';
+                foreach ( $myactions as $key ) {
+                        if ( strpos( $key, 'traceview' ) == FALSE ) {
+                          $configtext .= "tv_action_watch('$key');<br/>";
+                        }
+                }
+       // print '      alert("' . $configtext . '");';
+       
+       print '  var popupWindow = null; ';
+       print '  popupWindow = window.open("","_blank","scrollbars=yes,toolbar=no,menubar=no,status=no"); ';
+       print '  popupWindow.document.write("<p><b>Copy the following text into a file and place it in the /wp-content/plugins/traceview/conf.d folder</b></p><p>&lt;?php <br />' . $configtext . '?&gt;</p>"); ';
+
+       print '    }';
+       print "</script>\n";
+
+      print '<button type="button" name="traceview_autoconfig" id="traceview_autoconfig" onclick="showConfig();">TraceView Config</button>'; 
+    }
+}
+add_action('wp_footer','traceview_generate_config_from_current_page',254);
 
 ?>
