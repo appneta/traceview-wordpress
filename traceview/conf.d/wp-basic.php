@@ -50,20 +50,20 @@ tv_action_watch('wp_head');
 tv_action_watch('wp_meta');
 tv_action_watch('wp_footer');
 
-add_action('publish_post','traceview_log_hook');
-add_action('plugins_loaded','traceview_log_hook');
-add_action('muplugins_loaded','traceview_log_hook');
-add_action('wp_loaded','traceview_log_hook');
-add_action('admin_menu','traceview_log_hook');
-add_action('admin_head','traceview_log_hook');
-add_action('admin_footer','traceview_log_hook');
-add_action('admin_init','traceview_log_hook');
-add_action('admin_body_class','traceview_log_hook');
-add_action('pre_get_posts','traceview_log_hook');
-add_action('pre_get_comments','traceview_log_hook');
-add_action('pre_http_request','traceview_log_hook');
-add_action('generate_rewrite_rules','traceview_log_hook');
-add_action('comment_loop_start','traceview_log_hook');
+tv_action_watch('publish_post');
+tv_action_watch('plugins_loaded');
+tv_action_watch('muplugins_loaded');
+tv_action_watch('wp_loaded');
+tv_action_watch('admin_menu');
+tv_action_watch('admin_head');
+tv_action_watch('admin_footer');
+tv_action_watch('admin_init');
+tv_action_watch('admin_body_class');
+tv_action_watch('pre_get_posts');
+tv_action_watch('pre_get_comments');
+tv_action_watch('pre_http_request');
+tv_action_watch('generate_rewrite_rules');
+tv_action_watch('comment_loop_start');
 
 
 add_action('get_header','traceview_log_hook');
