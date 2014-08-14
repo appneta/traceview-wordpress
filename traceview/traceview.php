@@ -266,13 +266,16 @@ EOHTML;
 
 function traceview_admin_menu()
 {
-   // We use the "update_core" permission, on the premise that only server admins should be doing this
-   add_submenu_page('settings.php', 'TraceView', 'TraceView by AppNeta', 'update_core', 'traceview.php', 'traceview_options_page');
+   // We use the "edit_plugins" permission, on the premise that only server admins should be doing this
+   add_submenu_page('settings.php', 'TraceView', 'TraceView by AppNeta', 'edit_plugins', 'traceview.php', 'traceview_options_page');
 }
 
 //Hook for admin menu (multi-site safe)
-$hook = is_multisite() ? 'network_' : '';
-add_action( "{$hook}admin_menu", 'traceview_admin_menu');
+if (is_multisite()) {
+    add_action( "network_admin_menu", 'traceview_admin_menu');
+} else {
+    add_action( "admin_menu", 'traceview_admin_menu');
+}
 
 /**
   ----------------------------
