@@ -2,8 +2,8 @@
 /**
  * Plugin Name: TraceView by AppNeta
  * Plugin URI: https://github.com/appneta/traceview-wordpress
- * Description: A simple plug-in for intrsumenting TraceView under WordPress.
- * Version: 0.5b beta
+ * Description: A simple plug-in for instrumenting TraceView under WordPress.
+ * Version: 0.6b beta
  * Author: Greg Bromage <gbromage@appneta.com
  * Author URI: http://www.appneta.com
  * License: MIT Licence ( http://opensource.org/licenses/MIT )
