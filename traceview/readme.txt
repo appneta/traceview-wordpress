@@ -4,7 +4,7 @@ Donate link: http://www.appneta.com/
 Tags: traceview, appneta, performance, monitor, monitoring, apm
 Requires at least: 3.0.1
 Tested up to: 3.9
-Stable tag: 0.5
+Stable tag: 0.6
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
@@ -21,8 +21,8 @@ agents on each web host.
 == Installation ==
 
 1. Ensure your web host has the TraceView host and PHP instrumentation installed
-2. Upload `traceview.php` to the `/wp-content/plugins/traceview/` directory
-3. Activate the plugin through the 'Plugins' menu in WordPress
+2. Download the latest ZIP file of the plug-in
+3. Upload and Activate the plugin through the 'Plugins' menu in WordPress
 4. Configure your Client Key and Application name in the Settings menu 
 5. Profit!!
 
