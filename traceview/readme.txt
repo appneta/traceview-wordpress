@@ -37,6 +37,9 @@ agents on each web host.
 3. Annotations will be automatically added when themes or active plugins change
 
 == Changelog ==
+= 0.7 =
+* Bug fixes
+
 = 0.5 =
 * Added Auto-config button functionality
 

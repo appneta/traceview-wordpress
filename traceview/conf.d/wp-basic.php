@@ -61,7 +61,9 @@ tv_action_watch('admin_init');
 tv_action_watch('admin_body_class');
 tv_action_watch('pre_get_posts');
 tv_action_watch('pre_get_comments');
-tv_action_watch('pre_http_request');
+# Do not trace this hook - doing so will break the Plugin
+# search screen
+# tv_action_watch('pre_http_request');
 tv_action_watch('generate_rewrite_rules');
 tv_action_watch('comment_loop_start');
 

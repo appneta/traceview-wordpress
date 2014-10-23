@@ -3,7 +3,7 @@
  * Plugin Name: TraceView by AppNeta
  * Plugin URI: https://github.com/appneta/traceview-wordpress
  * Description: A simple plug-in for instrumenting TraceView under WordPress.
- * Version: 0.6b beta
+ * Version: 0.7 beta
  * Author: Greg Bromage <gbromage@appneta.com
  * Author URI: http://www.appneta.com
  * License: MIT Licence ( http://opensource.org/licenses/MIT )
@@ -266,8 +266,11 @@ EOHTML;
 
 function traceview_admin_menu()
 {
-   // We use the "edit_plugins" permission, on the premise that only server admins should be doing this
-   add_submenu_page('settings.php', 'TraceView', 'TraceView by AppNeta', 'edit_plugins', 'traceview.php', 'traceview_options_page');
+	if (is_multisite()) {
+		add_submenu_page( 'settings.php', 'TraceView by AppNeta', 'TraceView', 'edit_plugins', 'traceview', 'traceview_options_page');
+	} else {
+		add_management_page( 'TraceView by AppNeta', 'TraceView', 'edit_plugins', 'traceview', 'traceview_options_page');
+	}
 }
 
 //Hook for admin menu (multi-site safe)
@@ -334,9 +337,13 @@ add_action('wp_upgrade','traceview_annotate_upgrade');
 
 function traceview_annotate_theme_switch($oldtheme) {
     global $blog_id;
-    $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
     $thetheme = wp_get_theme();
-    $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has changed theme; new theme is " . filter_var($thetheme->get('Name'), FILTER_SANITIZE_STRING) . " version " . filter_var($thetheme->get('Version'), FILTER_SANITIZE_STRING);
+    if(function_exists('get_blog_details')) {
+	    $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
+	    $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has changed theme; new theme is " . filter_var($thetheme->get('Name'), FILTER_SANITIZE_STRING) . " version " . filter_var($thetheme->get('Version'), FILTER_SANITIZE_STRING);
+	} else {
+	    $Annotation = "Changed theme; new theme is " . filter_var($thetheme->get('Name'), FILTER_SANITIZE_STRING) . " version " . filter_var($thetheme->get('Version'), FILTER_SANITIZE_STRING);
+	}
     traceview_annotate($Annotation);
 }
 add_action('after_switch_theme','traceview_annotate_theme_switch');
@@ -348,8 +355,12 @@ function traceview_annotate_plugin_activate($plugin, $networkwide=null) {
         traceview_annotate($Annotation);
     } else {
         global $blog_id;
-        $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
-        $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has activated new plugin: $plugin ";
+        if(function_exists('get_blog_details')) {
+        	$current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
+        	$Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has activated new plugin: $plugin ";
+        } else {
+        	$Annotation = "Activated new plugin: $plugin ";
+        }
         traceview_annotate($Annotation);
     }
 }
@@ -362,8 +373,12 @@ function traceview_annotate_plugin_deactivate($plugin, $networkwide=null) {
         traceview_annotate($Annotation);
     } else {
         global $blog_id;
-        $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
-        $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has deactivated a plugin: $plugin ";
+        if(function_exists('get_blog_details')) {
+	        $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
+	        $Annotation = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING) . " has deactivated a plugin: $plugin ";
+		} else {
+		    $Annotation = "Deactivated plugin: $plugin ";
+		}
         traceview_annotate($Annotation);
     }
 }
