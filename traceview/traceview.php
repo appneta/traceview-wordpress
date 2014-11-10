@@ -108,27 +108,37 @@ function traceview_add_to_content( $content ) {
         $controller = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING);
      }
 
-        if( is_front_page() || is_home() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "home"));
-        } elseif( is_single() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "blog-post"));
-        } elseif( is_page() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "page"));
-        } elseif( is_category() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "category"));
-        } elseif( is_tag() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "tag"));
-        } elseif( is_author() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "author"));
-        } elseif( is_date() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "date"));
-        } elseif( is_search() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "search"));
-        } elseif( is_feed() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "feed"));
-	    } elseif( is_admin() ) {
-	    oboe_log("info", array("Controller" => $controller, "Action" => "admin"));
-        }
+	if( is_front_page() || is_home() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "home"));
+		oboe_log("info", array("Partition" => "Navigation"));
+	} elseif( is_single() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "blog-post"));
+		oboe_log("info", array("Partition" => "Content"));
+	} elseif( is_page() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "page"));
+		oboe_log("info", array("Partition" => "Content"));
+	} elseif( is_category() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "category"));
+		oboe_log("info", array("Partition" => "Navigation"));
+	} elseif( is_tag() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "tag"));
+		oboe_log("info", array("Partition" => "Navigation"));
+	} elseif( is_author() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "author"));
+		oboe_log("info", array("Partition" => "Navigation"));
+	} elseif( is_date() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "date"));
+		oboe_log("info", array("Partition" => "Navigation"));
+	} elseif( is_search() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "search"));
+		oboe_log("info", array("Partition" => "Navigation"));
+	} elseif( is_feed() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "feed"));
+		oboe_log("info", array("Partition" => "Syndication"));
+	} elseif( is_admin() ) {
+		oboe_log("info", array("Controller" => $controller, "Action" => "admin"));
+		oboe_log("info", array("Partition" => "Admin"));
+	}
     return $content;
 }
 add_filter('the_content', 'traceview_add_to_content');
