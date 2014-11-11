@@ -3,7 +3,7 @@
  * Plugin Name: TraceView by AppNeta
  * Plugin URI: https://github.com/appneta/traceview-wordpress
  * Description: A simple plug-in for instrumenting TraceView under WordPress.
- * Version: 0.7 beta
+ * Version: 0.8 beta
  * Author: Greg Bromage <gbromage@appneta.com
  * Author URI: http://www.appneta.com
  * License: MIT Licence ( http://opensource.org/licenses/MIT )
@@ -158,12 +158,14 @@ function traceview_add_options()
     add_site_option('traceview_layer_prefix', 'wp_', "This string will be pre-pended to the hook name to create the layer name.");
     add_site_option('traceview_add_annotations', 1, "When ticked, TraceView will report annotations for certain system events");
     add_site_option('traceview_add_autoconfig_button', 0, "When ticked, the Auto-generate button will be displayed");
+    add_site_option('traceview_add_rum', 0, "When ticked, the Real User Monitoring headers will be added");
   } else {
     add_option('traceview_client_key', 'Not set', "Your TraceView Client Key (obtain this from the TraceView console Get Started page");
     add_option('traceview_application_name', 'Default', "The application name in your TraceView console for this web application");
     add_option('traceview_layer_prefix', 'wp_', "This string will be pre-pended to the hook name to create the layer name.");
     add_option('traceview_add_annotations', 1, "When ticked, TraceView will report annotations for certain system events");
     add_option('traceview_add_autoconfig_button', 0, "When ticked, the Auto-generate button will be displayed");
+    add_option('traceview_add_rum', 0, "When ticked, the Real User Monitoring headers will be added");
   }
 }
 traceview_add_options();
@@ -186,6 +188,7 @@ function traceview_options_page()
 
 		$ann = ($_POST['traceview_add_annotations'] == 1) ? 1 : 0;
         $autoconfig = ($_POST['traceview_add_autoconfig_button'] == 1) ? 1 : 0;
+        $rum = ($_POST['traceview_add_rum'] == 1) ? 1 : 0;
         
         if(is_multisite()) {
             update_site_option('traceview_client_key', $ClientKey);
@@ -193,12 +196,14 @@ function traceview_options_page()
             update_site_option('traceview_layer_prefix', $LayerPrefix);
             update_site_option('traceview_add_annotations', $ann);
             update_site_option('traceview_add_autoconfig_button', $autoconfig);
+            update_site_option('traceview_add_rum', $rum);
         } else {
             update_option('traceview_client_key', $ClientKey);
             update_option('traceview_application_name', $AppName);
             update_option('traceview_layer_prefix', $LayerPrefix);
             update_option('traceview_add_annotations', $ann);
             update_option('traceview_add_autoconfig_button', $autoconfig);
+            update_option('traceview_add_rum', $rum);
 	}
         traceview_annotate('TraceView plugin settings updated');
         $updated = true;
@@ -209,6 +214,7 @@ function traceview_options_page()
     $Annotate = is_multisite() ? get_site_option('traceview_add_annotations') : get_option('traceview_add_annotations');
     $autoconfig = is_multisite() ? get_site_option('traceview_add_autoconfig_button') : get_option('traceview_add_autoconfig_button');
     $LayerPrefix = is_multisite() ? get_site_option('traceview_layer_prefix') : get_option('traceview_layer_prefix');
+    $rum = is_multisite() ? get_site_option('traceview_add_rum') : get_option('traceview_add_rum');
 
 if($updated)
 {
@@ -223,6 +229,8 @@ $AnnotateFlag = '';
 if($Annotate == 1) {$AnnotateFlag = 'checked '; }
 $AutoConfigFlag = '';
 if($autoconfig == 1) {$AutoConfigFlag = 'checked '; }
+$RUMFlag = '';
+if($rum == 1) {$RUMFlag = 'checked '; }
 
 echo <<<EOHTML
 <div class="wrap">
@@ -246,6 +254,10 @@ echo <<<EOHTML
     <tr>       
         <td><label for="traceview_add_annotations">Add annotations</label></td>
         <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /></td>
+    </tr>       
+    <tr>       
+        <td><label for="traceview_add_rum">Add RUM Headers</label></td>
+        <td><input type="checkbox" name="traceview_add_rum" id="traceview_add_rum" value="1" title="When checked, the TraceView Wordpress module will Real User Monitoring headers.  Do NOT tick this box if the Auto RUM feature is enabled in your App Configuration." {$RUMFlag} /> <b>Note:</b> Do not enable this option if you have enabled Auto-RUM in your TraceView App Configuration.</td>
     </tr>       
     <tr>       
         <td><label for="traceview_add_autoconfig_button">Add auto-config button to bottom of page</label></td>
@@ -421,5 +433,29 @@ function traceview_generate_config_from_current_page()
     }
 }
 add_action('wp_footer','traceview_generate_config_from_current_page',254);
+
+
+/**
+  ----------------------------
+  RUM section
+
+**/
+
+function traceview_insert_rum_header()
+{
+	if( extension_loaded('oboe') ) { echo oboe_get_rum_header(); }
+}
+
+function traceview_insert_rum_footer()
+{
+	if( extension_loaded('oboe') ) { echo oboe_get_rum_footer(); }
+}
+
+$ShouldRUM = is_multisite() ? get_site_option('traceview_add_rum') : get_option('traceview_add_rum');
+if($ShouldRUM == 1) {
+    add_action('wp_head', 'traceview_insert_rum_header', 5);
+    add_action('wp_footer', 'traceview_insert_rum_footer', 250);
+}
+
 
 ?>

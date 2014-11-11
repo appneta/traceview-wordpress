@@ -4,7 +4,7 @@ Donate link: http://www.appneta.com/
 Tags: traceview, appneta, performance, monitor, monitoring, apm
 Requires at least: 3.0.1
 Tested up to: 3.9
-Stable tag: 0.6
+Stable tag: 0.8
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
@@ -37,6 +37,9 @@ agents on each web host.
 3. Annotations will be automatically added when themes or active plugins change
 
 == Changelog ==
+= 0.8 =
+* Added Real User Monitoring option to settings
+
 = 0.7 =
 * Bug fixes
 
