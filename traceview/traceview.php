@@ -234,34 +234,39 @@ if($rum == 1) {$RUMFlag = 'checked '; }
 
 echo <<<EOHTML
 <div class="wrap">
-<img src='http://www.appneta.com/images/graphics/logo.png' alt='AppNeta logo' /><h1>TraceView by AppNeta Settings</h1>
+<img src='http://www.appneta.com/images/graphics/appneta_branding/logo_2x.png' alt='AppNeta logo' /><h1>TraceView by AppNeta Settings</h1>
 <form method="post" action="{$_SERVER['REQUEST_URI']}">
 <fieldset class="options">       
-<h2>Add TraceView options</h2>
+<h2>Tracing options</h2>
 <table>
-    <tr>       
-        <td><label for="traceview_client_key">Client Key:</label></td>
-        <td><input type="text" size="45" name="traceview_client_key" id="traceview_client_key" value="{$ClientKey}" title="The client key of your TraceView account." /></td>
-    </tr>       
     <tr>       
         <td><label for="traceview_layer_prefix">Layer prefix:</label></td>
         <td><input type="text" size="45" name="traceview_layer_prefix" id="traceview_layer_prefix" value="{$LayerPrefix}" title="This string will be pre-pended to the hook name when layers are created." /></td>
-    </tr>       
-    <tr>       
-        <td><label for="traceview_application_name">Application name:</label></td>
-        <td><input type="text" size="45" name="traceview_application_name" id="traceview_application_name" value="{$AppName}" title="The application name, as defined in your TraceView dashboard." /></td>
-    </tr>       
-    <tr>       
-        <td><label for="traceview_add_annotations">Add annotations</label></td>
-        <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /> <b>Note:</b> This requires that the <i>php-curl</i> module be installed.</td>
-    </tr>       
+    </tr>
     <tr>       
         <td><label for="traceview_add_rum">Add RUM Headers</label></td>
         <td><input type="checkbox" name="traceview_add_rum" id="traceview_add_rum" value="1" title="When checked, the TraceView Wordpress module will Real User Monitoring headers.  Do NOT tick this box if the Auto RUM feature is enabled in your App Configuration." {$RUMFlag} /> <b>Note:</b> Do not enable this option if you have enabled Auto-RUM in your TraceView App Configuration.</td>
     </tr>       
     <tr>       
         <td><label for="traceview_add_autoconfig_button">Add auto-config button to bottom of page</label></td>
-        <td><input type="checkbox" name="traceview_add_autoconfig_button" id="traceview_add_autoconfig_button" value="1" title="When ticked, the Auto-generate button will be displayed" {$AutoConfigFlag} /></td>
+        <td><input type="checkbox" name="traceview_add_autoconfig_button" id="traceview_add_autoconfig_button" value="1" title="When ticked, the Auto-generate button will be displayed for Admins" {$AutoConfigFlag} /></td>
+    </tr>       
+
+</table>
+<hr width="50%" />
+<h2>Graph annotations</h2>
+<table>       
+    <tr>       
+        <td><label for="traceview_add_annotations">Add annotations</label></td>
+        <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /> <b>Note:</b> This requires that the <i>php-curl</i> module be installed.</td>
+    </tr>       
+    <tr>       
+        <td><label for="traceview_client_key">Client Key:</label></td>
+        <td><input type="text" size="45" name="traceview_client_key" id="traceview_client_key" value="{$ClientKey}" title="The client key of your TraceView account." /></td>
+    </tr>       
+    <tr>       
+        <td><label for="traceview_application_name">Application name:</label></td>
+        <td><input type="text" size="45" name="traceview_application_name" id="traceview_application_name" value="{$AppName}" title="The application name, as defined in your TraceView dashboard." /></td>
     </tr>       
 </table>
 
