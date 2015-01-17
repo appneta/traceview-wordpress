@@ -253,7 +253,7 @@ echo <<<EOHTML
     </tr>       
     <tr>       
         <td><label for="traceview_add_annotations">Add annotations</label></td>
-        <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /></td>
+        <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /> <b>Note:</b> This requires that the <i>php-curl</i> module be installed.</td>
     </tr>       
     <tr>       
         <td><label for="traceview_add_rum">Add RUM Headers</label></td>
