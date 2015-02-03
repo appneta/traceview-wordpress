@@ -3,12 +3,13 @@ Contributors: enigma-it
 Donate link: http://www.appneta.com/
 Tags: traceview, appneta, performance, monitor, monitoring, apm
 Requires at least: 3.0.1
-Tested up to: 3.9
-Stable tag: 0.8
+Tested up to: 4.0
+Stable tag: 1.0
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
 This plug-in integrates WordPress with AppNeta's TraceView APM system.
+
 == Description ==
 
 AppNeta's TraceView provides the easiest, smoothest way to monitor the performance of your
@@ -21,22 +22,29 @@ agents on each web host.
 == Installation ==
 
 1. Ensure your web host has the TraceView host and PHP instrumentation installed
-2. Download the latest ZIP file of the plug-in
-3. Upload and Activate the plugin through the 'Plugins' menu in WordPress
-4. Configure your Client Key and Application name in the Settings menu 
-5. Profit!!
+2. Download and Activate the plugin through the 'Plugins' menu in WordPress
+3. Configure your Client Key and Application name in the Settings menu 
+4. Profit!!
 
-(6. Suggest any additional hooks/filters/annotations you would like monitored via
-    the GitHub repository or email support@appneta.com)
+(5. Suggest any additional hooks/filters/annotations you would like monitored via
+    the GitHub repository or email traceviewsupport@appneta.com)
 
 
 == Screenshots ==
 
 1. The Settings page, where you add your Client Key and Application name
-2. In the TraceView, you will see "wordpress-" layers created for each hook
+2. In the TraceView, you will see "wp-" layers created for each hook
 3. Annotations will be automatically added when themes or active plugins change
+   (This requires the php_curl module to be available)
+
 
 == Changelog ==
+= 1.0 =
+Initial public release
+
+= 0.8.1 =
+* Internal bug fixes
+
 = 0.8 =
 * Added Real User Monitoring option to settings
 

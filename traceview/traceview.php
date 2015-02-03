@@ -3,11 +3,12 @@
  * Plugin Name: TraceView by AppNeta
  * Plugin URI: https://github.com/appneta/traceview-wordpress
  * Description: A simple plug-in for instrumenting TraceView under WordPress.
- * Version: 0.8 beta
+ * Version: 1.0
  * Author: Greg Bromage <gbromage@appneta.com
  * Author URI: http://www.appneta.com
  * License: MIT Licence ( http://opensource.org/licenses/MIT )
  */
+$GLOBALS['wordpress_traceview_plugin_version'] = '1.0';
 
 /* Check to see that we're being called properly */
 defined('ABSPATH') or die("No script kiddies please!");
@@ -81,7 +82,6 @@ function traceview_log_action_end() {
 function tv_action_watch($actionname) {
     add_action($actionname,'traceview_log_action_start',1);
     add_action($actionname,'traceview_log_action_end',255);
-
 }
 
 function tv_filter_watch($filtername) {
@@ -95,8 +95,6 @@ foreach (glob( plugin_dir_path( __FILE__ ) . "conf.d/*.php") as $filename)
     require_once $filename;
     oboe_log(null,'info', array('includes'=>$filename));
 }
-
-//** **//
 
 // Now add controller / actions
 
@@ -175,16 +173,15 @@ function traceview_options_page()
     global $ClientKey, $AppName, $Annotate;
     $updated = false;
 
-    if( isset($_POST['Submit']) )
-    {
+    if( isset($_POST['Submit']) ) {
         $ClientKey = (string)trim($_POST['traceview_client_key']);
         $ClientKey = filter_var($ClientKey, FILTER_SANITIZE_STRING);
         
-	$AppName = (string)trim($_POST['traceview_application_name']);
+	    $AppName = (string)trim($_POST['traceview_application_name']);
         $AppName = filter_var($AppName, FILTER_SANITIZE_STRING);
 	
-	$LayerPrefix = (string)trim($_POST['traceview_layer_prefix']);
-	$LayerPrefix = filter_var($LayerPrefix, FILTER_SANITIZE_STRING);
+	    $LayerPrefix = (string)trim($_POST['traceview_layer_prefix']);
+	    $LayerPrefix = filter_var($LayerPrefix, FILTER_SANITIZE_STRING);
 
 		$ann = ($_POST['traceview_add_annotations'] == 1) ? 1 : 0;
         $autoconfig = ($_POST['traceview_add_autoconfig_button'] == 1) ? 1 : 0;
@@ -204,7 +201,7 @@ function traceview_options_page()
             update_option('traceview_add_annotations', $ann);
             update_option('traceview_add_autoconfig_button', $autoconfig);
             update_option('traceview_add_rum', $rum);
-	}
+	    }
         traceview_annotate('TraceView plugin settings updated');
         $updated = true;
     };
@@ -226,11 +223,11 @@ EOHTML;
 }
 
 $AnnotateFlag = '';
-if($Annotate == 1) {$AnnotateFlag = 'checked '; }
+if($Annotate == 1) { $AnnotateFlag = 'checked '; }
 $AutoConfigFlag = '';
-if($autoconfig == 1) {$AutoConfigFlag = 'checked '; }
+if($autoconfig == 1) { $AutoConfigFlag = 'checked '; }
 $RUMFlag = '';
-if($rum == 1) {$RUMFlag = 'checked '; }
+if($rum == 1) { $RUMFlag = 'checked '; }
 
 echo <<<EOHTML
 <div class="wrap">
@@ -255,10 +252,11 @@ echo <<<EOHTML
 </table>
 <hr width="50%" />
 <h2>Graph annotations</h2>
+<P> <b>Note:</b> This requires that the <i>php-curl</i> module be installed.</P>
 <table>       
     <tr>       
         <td><label for="traceview_add_annotations">Add annotations</label></td>
-        <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /> <b>Note:</b> This requires that the <i>php-curl</i> module be installed.</td>
+        <td><input type="checkbox" name="traceview_add_annotations" id="traceview_add_annotations" value="1" title="When checked, TraceView will add annotations for certain system events." {$AnnotateFlag} /></td>
     </tr>       
     <tr>       
         <td><label for="traceview_client_key">Client Key:</label></td>
@@ -277,10 +275,10 @@ echo <<<EOHTML
 <hr width="50%" />
 <h2>Currently enabled modules</h2>
 <ul>
+<li>traceview.php version {$GLOBALS['wordpress_traceview_plugin_version']}</li>
 EOHTML;
 
-foreach (glob( plugin_dir_path( __FILE__ ) . "conf.d/*.php") as $filename) 
-    {
+foreach (glob( plugin_dir_path( __FILE__ ) . "conf.d/*.php") as $filename) {
         echo "<li>$filename</li>";
     }
 
@@ -326,14 +324,13 @@ function traceview_annotate($message) {
         $AppName = is_multisite() ? get_site_option('traceview_application_name') : get_option('traceview_application_name');
 
 	    $current_user = wp_get_current_user();
-
     
         $url = 'https://api.tv.appneta.com/api-v2/log_message';
         $fields = array(
     		'message' => urlencode($message),
-		'appname' => urlencode($AppName),
-		'key' => urlencode($ClientKey),
-		'username' => urlencode($current_user->user_login)
+		    'appname' => urlencode($AppName),
+	    	'key' => urlencode($ClientKey),
+		    'username' => urlencode($current_user->user_login)
 		);
 
 	foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
@@ -352,7 +349,7 @@ function traceview_annotate($message) {
 
 	//close connection
 	curl_close($ch);
-        oboe_log_exit("$($LayerPrefix)traceview-annotate");
+    oboe_log_exit("$($LayerPrefix)traceview-annotate");
     }
 
 }
