@@ -98,13 +98,17 @@ foreach (glob( plugin_dir_path( __FILE__ ) . "conf.d/*.php") as $filename)
 
 // Now add controller / actions
 
-function traceview_add_to_content( $content ) {
+function traceview_get_controller() {
      $controller = 'wordpress';
      if(is_multisite()) {
         global $blog_id;
         $current_blog_details = get_blog_details( array( 'blog_id' => $blog_id ) );
         $controller = filter_var($current_blog_details->blogname, FILTER_SANITIZE_STRING);
      }
+     return $controller;
+}
+function traceview_add_to_content( $content ) {
+     $controller = traceview_get_controller();
 
 	if( is_front_page() || is_home() ) {
 		oboe_log("info", array("Controller" => $controller, "Action" => "home"));
@@ -141,6 +145,23 @@ function traceview_add_to_content( $content ) {
 }
 add_filter('the_content', 'traceview_add_to_content');
 
+function traceview_login_controller($content) {
+     $controller = traceview_get_controller();
+
+     oboe_log("info", array("Controller" => $controller, "Action" => "login"));
+     oboe_log("info", array("Partition" => "Login page"));
+     return $content;
+}
+add_action('login_head','traceview_login_controller');
+
+function traceview_xmlrpc_controller($content) {
+     $controller = traceview_get_controller();
+
+     oboe_log("info", array("Controller" => $controller, "Action" => "xmlrpc"));
+     oboe_log("info", array("Partition" => "RPC"));
+     return $content;
+}
+add_action('xmlrpc_rsd_apis','traceview_xmlrpc_controller');
 
 /**
   ----------------------------
