@@ -3,12 +3,12 @@
  * Plugin Name: TraceView by AppNeta
  * Plugin URI: https://github.com/appneta/traceview-wordpress
  * Description: A simple plug-in for instrumenting TraceView under WordPress.
- * Version: 1.0
+ * Version: 1.0.1
  * Author: Greg Bromage <gbromage@appneta.com
  * Author URI: http://www.appneta.com
  * License: MIT Licence ( http://opensource.org/licenses/MIT )
  */
-$GLOBALS['wordpress_traceview_plugin_version'] = '1.0';
+$GLOBALS['wordpress_traceview_plugin_version'] = '1.0.1';
 
 /* Check to see that we're being called properly */
 defined('ABSPATH') or die("No script kiddies please!");
@@ -95,6 +95,7 @@ foreach (glob( plugin_dir_path( __FILE__ ) . "conf.d/*.php") as $filename)
     require_once $filename;
     oboe_log(null,'info', array('includes'=>$filename));
 }
+oboe_log(null, 'info', array("TraceView-WordPress-Plugin-Version" => $GLOBALS['wordpress_traceview_plugin_version']));
 
 // Now add controller / actions
 
