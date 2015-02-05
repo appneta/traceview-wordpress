@@ -146,6 +146,9 @@ function traceview_add_to_content( $content ) {
 }
 add_filter('the_content', 'traceview_add_to_content');
 
+/** These two instances, wp-longin and xml-rpc, don't use the_content hook so they
+require their own hooks **/
+
 function traceview_login_controller($content) {
      $controller = traceview_get_controller();
 
