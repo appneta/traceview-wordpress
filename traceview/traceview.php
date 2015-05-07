@@ -15,7 +15,7 @@ defined('ABSPATH') or die("No script kiddies please!");
 require 'tv-api-stub.php';
 
 function traceview_start_section($args) { 
-       $hookname = current_filter();
+       $hookname = (string)current_filter();
        $strip_list = array('_before','_after','before_','after_','pre_','post_','_start','_end');
        $hookname = str_replace($strip_list, '',$hookname);
        $hookname = str_replace('__', '_',$hookname); /* check for double underscores */
@@ -39,7 +39,7 @@ function traceview_end_section($args) {
 }
 
 function traceview_log_hook() {
-        $hookname = current_filter();
+        $hookname = (string)current_filter();
         $hookname = filter_var($hookname, FILTER_SANITIZE_STRING);
         $LayerPrefix = is_multisite() ? get_site_option('traceview_layer_prefix') : get_option('traceview_layer_prefix');
 
@@ -48,7 +48,7 @@ function traceview_log_hook() {
 }
 
 function traceview_log_filter_start($content) {
-       $hookname = current_filter();
+       $hookname = (string)current_filter();
        $hookname = filter_var($hookname, FILTER_SANITIZE_STRING);
        $LayerPrefix = is_multisite() ? get_site_option('traceview_layer_prefix') : get_option('traceview_layer_prefix');
        $hookname = "$LayerPrefix$hookname";
